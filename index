@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extensions Masterclass — Χαρά Στεργίου</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:    #F5F4F2;
+    --warm:     #EEECE9;
+    --gold:     #4A4A4A;
+    --gold-d:   #1A1A1A;
+    --gold-l:   #7A7A7A;
+    --gold-pale:#E8E7E4;
+    --brown:    #111111;
+    --brown-m:  #333333;
+    --brown-l:  #666666;
+    --off:      #0A0A0A;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--brown);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: .4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    background: var(--off);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 64px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(184,151,61,0.03) 40px,
+      rgba(184,151,61,0.03) 41px
+    );
+    pointer-events: none;
+  }
+
+  .hero-watermark {
+    position: absolute;
+    top: -20px;
+    right: -40px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 220px;
+    font-weight: 700;
+    color: rgba(184,151,61,0.06);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -10px;
+    user-select: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 20px;
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 6vw, 80px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .hero-name strong {
+    font-weight: 700;
+    color: var(--gold-l);
+    display: block;
+  }
+
+  .hero-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin: 28px 0;
+  }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(255,255,255,.45);
+    line-height: 1.5;
+    max-width: 320px;
+  }
+
+  .hero-social {
+    margin-top: 40px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hero-social span { color: rgba(255,255,255,0.9); }
+  .hero-social a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 11px; letter-spacing: 2px; }
+  .hero-social a:hover { color: rgba(255,255,255,.6); }
+
+  /* Hero Right */
+  .hero-right {
+    background: var(--warm);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 56px;
+    gap: 32px;
+    position: relative;
+  }
+
+  .seminar-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold-d);
+    border: 1px solid var(--gold);
+    padding: 7px 16px;
+    width: fit-content;
+  }
+
+  .seminar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 58px);
+    font-weight: 600;
+    color: var(--brown);
+    line-height: 1.05;
+    letter-spacing: -1px;
+  }
+
+  .seminar-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--brown-m);
+  }
+  .meta-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .meta-row strong { color: var(--brown); font-weight: 500; }
+
+  .price-block {
+    border-top: 1px solid rgba(184,151,61,.3);
+    padding-top: 24px;
+  }
+  .price-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-d);
+    margin-bottom: 6px;
+  }
+  .price-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--gold-d);
+    line-height: 1;
+  }
+  .price-num sup { font-size: 28px; vertical-align: super; }
+  .price-sub { font-size: 12px; color: var(--brown-l); margin-top: 4px; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(184,151,61,.5);
+    opacity: 0.6;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s 1.5s infinite;
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 70vh;
+    position: relative;
+  }
+
+  .about-left {
+    background: var(--gold-pale);
+    padding: 80px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-left::before {
+    content: '"';
+    position: absolute;
+    top: -40px;
+    left: 40px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 300px;
+    color: rgba(184,151,61,.08);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .section-eyebrow {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold-d);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .about-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-style: italic;
+    color: var(--brown-m);
+    line-height: 1.55;
+    margin-bottom: 20px;
+  }
+  .about-quote em { color: var(--gold-d); font-style: normal; font-weight: 600; }
+
+  .about-attr {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--gold-d);
+    text-transform: uppercase;
+  }
+
+  .about-right {
+    background: var(--cream);
+    padding: 80px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  .about-bio {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--brown-m);
+  }
+  .about-bio strong { color: var(--brown); font-weight: 500; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(184,151,61,.2);
+    border: 1px solid rgba(184,151,61,.2);
+  }
+  .stat {
+    background: var(--cream);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .stat-n {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--gold-d);
+    line-height: 1;
+  }
+  .stat-l {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brown-l);
+    margin-top: 4px;
+  }
+
+  /* ── PROGRAMME ── */
+  .programme {
+    background: var(--off);
+    padding: 96px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .programme .section-eyebrow {
+    color: rgba(255,255,255,0.5);
+  }
+  .programme::before {
+    content: 'MASTERCLASS';
+    position: absolute;
+    bottom: -60px;
+    right: -20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 180px;
+    font-weight: 700;
+    color: rgba(255,255,255,.02);
+    pointer-events: none;
+    letter-spacing: -8px;
+    white-space: nowrap;
+  }
+
+  .programme-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 64px;
+    gap: 40px;
+  }
+  .programme-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1;
+  }
+  .programme-title strong { font-weight: 700; color: #FFFFFF; display: block; }
+  .programme-intro {
+    max-width: 360px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,.8);
+  }
+
+  .programme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .prog-item {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.14);
+    padding: 32px 36px;
+    position: relative;
+    transition: background .3s;
+  }
+  .prog-item:hover { background: rgba(255,255,255,.08); }
+  .prog-num {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,.45);
+    position: absolute;
+    top: 20px; right: 24px;
+    line-height: 1;
+    letter-spacing: 3px;
+  }
+  .prog-tag {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.5);
+    margin-bottom: 10px;
+  }
+  .prog-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .prog-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,.75);
+    line-height: 1.6;
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials {
+    background: var(--warm);
+    padding: 96px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .testi-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold-d);
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  .testi-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 600;
+    color: var(--brown);
+    line-height: 1.1;
+  }
+  .testi-cards { display: flex; flex-direction: column; gap: 20px; }
+  .testi-card {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 24px 28px;
+  }
+  .testi-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--brown-m);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+  .testi-from {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-d);
+  }
+
+  /* ── FORM SECTION ── */
+  .form-section {
+    background: var(--cream);
+    padding: 96px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .form-info {
+    position: sticky;
+    top: 40px;
+  }
+  .form-info .section-eyebrow { margin-bottom: 16px; }
+  .form-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 600;
+    color: var(--brown);
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .form-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--brown-m);
+    margin-bottom: 32px;
+  }
+  .form-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid rgba(184,151,61,.25);
+    padding-top: 24px;
+  }
+  .detail-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+  .detail-key {
+    min-width: 110px;
+    color: var(--gold-d);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-top: 1px;
+  }
+  .detail-val { color: var(--brown-m); line-height: 1.5; }
+
+  .form-embed-wrap {
+    position: relative;
+  }
+  .form-frame-border {
+    border: 1px solid rgba(184,151,61,.3);
+    background: #fff;
+    overflow: hidden;
+  }
+  .form-frame-header {
+    background: var(--gold-d);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .frame-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,.2);
+  }
+  .frame-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+    margin-left: 4px;
+  }
+  .form-iframe {
+    width: 100%;
+    height: 820px;
+    border: none;
+    display: block;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--off);
+    padding: 48px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold-l);
+    letter-spacing: -0.5px;
+  }
+  .footer-name span { font-weight: 300; color: rgba(255,255,255,.5); }
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .footer-link {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.3);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .footer-link:hover { color: var(--gold); }
+  .footer-ig {
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    to { opacity: 1; transform: scaleX(1); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: .5; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.15); }
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity: 1; transform: translateY(0); transition: opacity .7s ease, transform .7s ease; }
+  .js-ready .reveal { opacity: 0; transform: translateY(28px); }
+  .js-ready .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: .1s; }
+  .reveal-delay-2 { transition-delay: .2s; }
+  .reveal-delay-3 { transition-delay: .3s; }
+  .reveal-delay-4 { transition-delay: .4s; }
+
+  /* ── RESPONSIVE ── */
+  /* ── TABLET ── */
+  @media (max-width: 900px) {
+    .hero, .about, .testimonials, .form-section { grid-template-columns: 1fr; }
+    .hero-left { min-height: 55svh; padding: 56px 40px 48px; }
+    .hero-right { padding: 48px 40px 56px; }
+    .hero-watermark { font-size: 160px; top: -10px; right: -20px; }
+    .about-left, .about-right { padding: 56px 40px; }
+    .programme { padding: 64px 40px; }
+    .programme-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .programme-grid { grid-template-columns: 1fr; }
+    .testimonials { padding: 64px 40px; }
+    .form-section { padding: 64px 40px; }
+    .form-info { position: static; }
+    footer { padding: 40px 40px; flex-direction: column; align-items: flex-start; }
+    .scroll-hint { display: none; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .hero { min-height: auto; display: flex; flex-direction: column; }
+    .hero-left { min-height: auto; padding: 64px 24px 48px; order: 1; }
+    .hero-watermark { font-size: 100px; opacity: .6; }
+    .hero-eyebrow { font-size: 9px; letter-spacing: 3px; margin-bottom: 14px; }
+    .hero-name { font-size: 52px; letter-spacing: -1.5px; }
+    .hero-rule { margin: 20px 0; }
+    .hero-tagline { font-size: 15px; }
+    .hero-social { margin-top: 28px; font-size: 10px; }
+    .hero-right { padding: 40px 24px 56px; order: 2; gap: 24px; }
+    .seminar-badge { font-size: 8px; padding: 6px 12px; }
+    .seminar-title { font-size: 36px; letter-spacing: -0.5px; }
+    .meta-row { font-size: 12px; gap: 10px; }
+    .meta-dot { width: 5px; height: 5px; }
+    .price-block { padding-top: 20px; }
+    .price-num { font-size: 52px; }
+    .price-num sup { font-size: 22px; }
+    .price-sub { font-size: 11px; }
+    .about { display: flex; flex-direction: column; }
+    .about-left { padding: 56px 24px 40px; }
+    .about-left::before { font-size: 180px; top: -20px; left: 16px; }
+    .about-quote { font-size: 20px; line-height: 1.5; }
+    .about-right { padding: 40px 24px 56px; gap: 28px; }
+    .about-bio { font-size: 14px; line-height: 1.75; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .stat { padding: 16px 8px; }
+    .stat-n { font-size: 28px; }
+    .stat-l { font-size: 8px; letter-spacing: 1px; }
+    .programme { padding: 56px 24px; }
+    .programme::before { display: none; }
+    .programme-header { margin-bottom: 40px; gap: 12px; }
+    .programme-title { font-size: 36px; }
+    .programme-intro { font-size: 13px; max-width: 100%; }
+    .programme-grid { grid-template-columns: 1fr; gap: 2px; }
+    .prog-item { padding: 24px 24px; }
+    .prog-num { font-size: 11px; top: 14px; right: 16px; letter-spacing: 3px; }
+    .prog-title { font-size: 19px; }
+    .prog-desc { font-size: 13px; }
+    .testimonials { display: flex; flex-direction: column; padding: 56px 24px; gap: 32px; }
+    .testi-heading { font-size: 36px; }
+    .testi-card { padding: 20px 22px; }
+    .testi-text { font-size: 15px; }
+    .form-section { display: flex; flex-direction: column; padding: 56px 24px; gap: 40px; }
+    .form-info { position: static; }
+    .form-heading { font-size: 36px; }
+    .form-desc { font-size: 13px; }
+    .detail-key { min-width: 90px; font-size: 10px; }
+    .detail-val { font-size: 12px; }
+    .form-iframe { height: 900px; }
+    footer { padding: 40px 24px; flex-direction: column; align-items: flex-start; gap: 20px; }
+    .footer-name { font-size: 20px; }
+    .footer-links { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .footer-ig { font-size: 11px; }
+    .footer-link { font-size: 9px; }
+    .section-eyebrow { font-size: 8px; letter-spacing: 3px; }
+  }
+
+  /* ── FORM CTA BLOCK ── */
+  .form-cta-block {
+    border: 1px solid var(--gold);
+    padding: 48px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    position: relative;
+    background: var(--warm);
+  }
+  .form-cta-top {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .form-cta-icon {
+    font-size: 22px;
+    color: var(--gold-d);
+    line-height: 1;
+  }
+  .form-cta-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--brown-m);
+    line-height: 1.7;
+  }
+  .form-cta-btn {
+    display: inline-block;
+    background: var(--off);
+    color: #fff;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 18px 40px;
+    text-align: center;
+    transition: background .2s, transform .15s;
+  }
+  .form-cta-btn:hover {
+    background: var(--brown-m);
+    transform: translateY(-1px);
+  }
+  .form-cta-note {
+    font-size: 11px;
+    color: var(--brown-l);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .form-cta-block { padding: 32px 24px; gap: 24px; }
+    .form-cta-text { font-size: 18px; }
+    .form-cta-btn { padding: 16px 28px; font-size: 12px; }
+  }
+
+
+  /* ── MOBILE FONT FIX — Cormorant italic unreadable at small sizes ── */
+  @media (max-width: 600px) {
+    .about-quote {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 1.7;
+      letter-spacing: 0;
+    }
+    .testi-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 1.75;
+      letter-spacing: 0;
+    }
+    .form-cta-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 1.7;
+      letter-spacing: 0;
+    }
+    .hero-tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0;
+    }
+    .programme-intro {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-style: normal;
+    }
+    .about-bio {
+      font-size: 15px;
+      line-height: 1.8;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-watermark">ΧΣ</div>
+    <div class="hero-eyebrow">HAIR EDUCATOR · EXTENSIONS SPECIALIST</div>
+    <h1 class="hero-name">
+      Χαρά
+      <strong>Στεργίου</strong>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-tagline">Transforming skills into mastery.<br>One seminar at a time.</p>
+    <div class="hero-social">
+      <div><span>@stergiouxara</span> &nbsp;·&nbsp; Instagram</div>
+      <a href="tel:+306938397383">+30 693 839 7383</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="seminar-badge">Signature Seminar — Νοέμβριος 2026</div>
+    <h2 class="seminar-title">Extensions<br>Masterclass</h2>
+    <div class="seminar-meta">
+      <div class="meta-row"><div class="meta-dot"></div><span><strong>Keratin Extensions · Tape · Micro Rings · Weft hair</strong></span></div>
+      <div class="meta-row"><div class="meta-dot"></div><span><strong>Δευτέρα 2 Νοεμβρίου 2026</strong> — Εντατική εκπαίδευση</span></div>
+      <div class="meta-row"><div class="meta-dot"></div><span>Hands-on εκπαίδευση · Πιστοποιητικό παρακολούθησης</span></div>
+      <div class="meta-row"><div class="meta-dot"></div><span>Θεσσαλονίκη — χώρος ανακοινώνεται σε επιβεβαιωμένους</span></div>
+    </div>
+    <div class="price-block">
+      <div class="price-label">Κοστος Συμμετοχης</div>
+      <div class="price-num"><sup>€</sup>250</div>
+      <div class="price-sub">ανά συμμετέχοντα · περιορισμένες θέσεις</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about">
+  <div class="about-left">
+    <div class="section-eyebrow reveal">What They Say</div>
+    <blockquote class="about-quote reveal reveal-delay-1">
+      «Η παρουσίαση σας κράτησε <em>αμείωτο το ενδιαφέρον</em> των μαθητών — ήταν πηγή έμπνευσης για τους μελλοντικούς επαγγελματίες του χώρου.»
+    </blockquote>
+    <div class="about-attr reveal reveal-delay-2">— Μαρία Γραμμενούδη · 2η ΕΠΑΣ Θεσσαλονίκης</div>
+  </div>
+  <div class="about-right">
+    <div>
+      <div class="section-eyebrow reveal">Ποια ειναι η Χαρα</div>
+      <p class="about-bio reveal reveal-delay-1">
+        Δεν είναι απλώς μια εκπαιδεύτρια. Είναι μια επαγγελματίας που μετατρέπει την τεχνογνωσία σε <strong>empowerment</strong>. Με <strong>2.000+ ώρες</strong> πραγματικής διδακτικής εμπειρίας σε ΙΕΚ, δημόσιες δομές και open seminars, έχει εκπαιδεύσει δεκάδες επαγγελματίες — φέρνοντας premium, structured training σε μια αγορά που λειτουργούσε ad-hoc.
+        <br><br>
+        Έχει συνεργαστεί με τη <strong>Gianneri Academy</strong>, έχει παρουσιαστεί στο <strong>Hair Festival</strong> και έχει συμμετάσχει στην κινηματογραφική παραγωγή <strong>Hollywood "The Bricklayer"</strong> ως hair specialist.
+      </p>
+    </div>
+    <div class="stats-grid reveal reveal-delay-2">
+      <div class="stat"><div class="stat-n">2.000+</div><div class="stat-l">Ωρες Διδ/λιας</div></div>
+      <div class="stat"><div class="stat-n">15+</div><div class="stat-l">Χρονια Εμπ.</div></div>
+      <div class="stat"><div class="stat-n">4+</div><div class="stat-l">Ιδρυματα</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROGRAMME ── -->
+<section class="programme">
+  <div class="programme-header">
+    <div>
+      <div class="section-eyebrow reveal" style="color:var(--gold);">Προγραμμα Σεμιναριου</div>
+      <h2 class="programme-title reveal reveal-delay-1">Τι θα<br><strong>Μάθεις</strong></h2>
+    </div>
+    <p class="programme-intro reveal reveal-delay-2">Η εκπαίδευση είναι δομημένη ώστε να φτάσεις από τη θεωρία στην πλήρη πρακτική εφαρμογή — με real-time feedback σε κάθε βήμα.</p>
+  </div>
+
+  <div class="programme-grid">
+    <div class="prog-item reveal">
+      <div class="prog-num">01</div>
+      <div class="prog-tag">Θεωρητικο Μερος</div>
+      <div class="prog-title">Υλικά &amp; Τεχνικές</div>
+      <div class="prog-desc">Αναλυτική παρουσίαση υλικών, εργαλείων και τεχνικών Keratin Extensions, Tape, Micro Rings και Weft hair. Ποια μέθοδος για ποιον τύπο μαλλιών.</div>
+    </div>
+    <div class="prog-item reveal reveal-delay-1">
+      <div class="prog-num">02</div>
+      <div class="prog-tag">Live Demonstration</div>
+      <div class="prog-title">Δες το να γίνεται</div>
+      <div class="prog-desc">Step-by-step επίδειξη από την εκπαιδεύτρια — κάθε τεχνική αναλύεται και εκτελείται μπροστά σου σε πραγματικό χρόνο.</div>
+    </div>
+    <div class="prog-item reveal reveal-delay-2">
+      <div class="prog-num">03</div>
+      <div class="prog-tag">Hands-on Practice</div>
+      <div class="prog-title">Εφαρμογή Hands-on</div>
+      <div class="prog-desc">Πρακτική εφαρμογή από κάθε συμμετέχοντα — όχι θεωρία, αλλά πραγματική εξάσκηση με άμεση καθοδήγηση.</div>
+    </div>
+    <div class="prog-item reveal reveal-delay-3">
+      <div class="prog-num">04</div>
+      <div class="prog-tag">Personal Coaching</div>
+      <div class="prog-title">Real-time Feedback</div>
+      <div class="prog-desc">Προσωπικό feedback για κάθε συμμετέχοντα. Φεύγεις με ξεκάθαρο επαγγελματικό επίπεδο και αυτοπεποίθηση.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials">
+  <div>
+    <div class="testi-label reveal">Τι Λενε</div>
+    <h2 class="testi-heading reveal reveal-delay-1">Η φήμη<br>μιλά<br>μόνη της.</h2>
+  </div>
+  <div class="testi-cards">
+    <div class="testi-card reveal">
+      <p class="testi-text">«Η παρουσίαση σας κράτησε αμείωτο το ενδιαφέρον των μαθητών — επίσης ήταν πηγή έμπνευσης για τους μελλοντικούς επαγγελματίες του χώρου. Ελπίζουμε η συνεργασία αυτή να είναι η αρχή μιας σειράς δράσεων.»</p>
+      <div class="testi-from">Μαρία Γραμμενούδη · Προϊσταμένη · 2η ΕΠΑΣ Θεσσαλονίκης</div>
+    </div>
+    <div class="testi-card reveal reveal-delay-1">
+      <p class="testi-text">«Η επαγγελματική της στάση, η δημιουργικότητα και η ικανότητά της να εμπνέει και να αναπτύσσει νέους επαγγελματίες την καθιστούν μία εξαιρετική εκπαιδεύτρια. Τη συστήνουμε ανεπιφύλακτα.»</p>
+      <div class="testi-from">Λιλιάν Γιαννέρη · Ιδρύτρια · Gianneri Academy</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FORM SECTION ── -->
+<section class="form-section" id="form">
+  <div class="form-info">
+    <div class="section-eyebrow reveal">Δηλωστε Συμμετοχη</div>
+    <h2 class="form-heading reveal reveal-delay-1">Εξασφαλίστε<br>τη θέση σας.</h2>
+    <p class="form-desc reveal reveal-delay-2">
+      Οι θέσεις είναι περιορισμένες για να διασφαλιστεί η ποιότητα της εκπαίδευσης. Συμπληρώστε τη φόρμα και θα επικοινωνήσω μαζί σας προσωπικά με όλες τις λεπτομέρειες.
+    </p>
+    <div class="form-details reveal reveal-delay-3">
+      <div class="detail-row">
+        <div class="detail-key">Ημερομηνιες</div>
+        <div class="detail-val">2 Νοεμβρίου 2026</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-key">Κοστος</div>
+        <div class="detail-val">250€ ανά συμμετέχοντα</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-key">Μορφη</div>
+        <div class="detail-val">Θεωρία &amp; Hands-on πρακτική</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-key">Πιστοποιητικο</div>
+        <div class="detail-val">Παρέχεται σε όλους τους συμμετέχοντες</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-key">Instagram</div>
+        <div class="detail-val">@stergiouxara</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-key">Τηλεφωνο</div>
+        <div class="detail-val"><a href="tel:+306938397383" style="color:inherit;">+30 693 839 7383</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-embed-wrap reveal reveal-delay-1">
+    <div class="form-cta-block">
+      <div class="form-cta-top">
+        <div class="form-cta-icon">✦</div>
+        <p class="form-cta-text">
+          Συμπλήρωσε τη φόρμα δήλωσης ενδιαφέροντος και εξασφάλισε τη θέση σου.
+          Θα επικοινωνήσω μαζί σου προσωπικά με όλες τις λεπτομέρειες.
+        </p>
+      </div>
+      <a class="form-cta-btn" href="https://forms.gle/RHQ571pjp7QPt5wA6" target="_blank" rel="noopener">
+        Δηλώστε Συμμετοχή →
+      </a>
+      <p class="form-cta-note">Ανοίγει σε νέα καρτέλα · Διαρκεί 2 λεπτά</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-name"><span>Χαρά </span>Στεργίου</div>
+  <div class="footer-links">
+    <span class="footer-ig">@stergiouxara</span>
+    <span class="footer-link">+30 693 839 7383</span>
+    <span class="footer-link">Hair Educator</span>
+    <span class="footer-link">Θεσσαλονίκη · 2026</span>
+  </div>
+</footer>
+
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-ready');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }
+</script>
+</body>
+</html>
